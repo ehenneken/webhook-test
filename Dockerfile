@@ -24,7 +24,7 @@ RUN if -e alembic.ini; then alembic -c ./alembic.ini upgrade head; fi
 ADD gunicorn.conf.py /app/gunicorn.conf.py
 ADD gunicorn.sh /etc/service/gunicorn/run
 
-EXPOSE 80
+EXPOSE 9000
 # insert the local config
 ADD service/local_config.py /local_config.py
 RUN /bin/bash -c "find . -maxdepth 2 -name config.py -exec /bin/bash -c 'echo {} | sed s/config.py/local_config.py/ | xargs -n1 cp /local_config.py' \;"

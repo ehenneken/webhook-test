@@ -12,7 +12,7 @@ if _s is None or _s == '':
 APP_NAME = '{0}.{1}'.format(_s, _e)
 bool_map = {'':False, 'True': True, 'true': True, 'false': False, 'False': False}
 
-bind = os.environ.get('GUNICORN_BIND', "0.0.0.0:80")
+bind = os.environ.get('GUNICORN_BIND', "0.0.0.0:9000")
 
 # the best setting so far was sync workers+threads
 workers = int(os.environ.get('GUNICORN_WORKERS', multiprocessing.cpu_count() * 2 + 1))
