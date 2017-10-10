@@ -1,0 +1,14 @@
+*.pyc
+*local_config.py*
+*.dot
+*.plantuml
+*.ps
+*.pdf
+*.png
+logs/
+*.ignore
+*~
+venv
+.coverage*
+scripts
+data
