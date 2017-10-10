@@ -20,6 +20,16 @@ WEBHOOK_REGISTRATION_TOKEN = 'another very secret token'
 AVAILABLE_EVENTS = [] # list of supported events
 EVENT_DESCRIPTIONS = {}
 MAX_SEND_ATTEMPTS = 5
+DEFAULT_PAYLOAD = {
+    "account_id":"will hold user id",
+    "event": "will hold event string",
+    "creator": "ADS",
+    "license": "CC0",
+    "description": "ADS citation events",
+    "time_stamp": "time stamp of event",
+    "event_data": {},
+    "event_id": "event identifier"
+}
 # sqlite:////tmp/test.db
 #SQLALCHEMY_BINDS = {
 #    'webhooks': 'postgresql+psycopg2://postgres:postgres@localhost:5433/testdb'

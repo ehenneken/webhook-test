@@ -66,13 +66,18 @@ class ResendEvents(Command):
                     "cited_bibcode": event.cited_bibcode,
                     "cited_id": event.cited_id
                 }
-                data = {
-                    "account_id":retry.user_id,
-                    "event": evt,
-                    "description": "ADS citation events",
-                    "time_stamp": event.event_time.strftime('%s'),
-                    "event_data": event_data,           
-                }
+                data = app.config.get('DEFAULT_PAYLOAD')
+                data["account_id"] = retry.user_id
+                data["event"] = evt
+                data["time_stamp"] = event.event_time.strftime('%s')
+                data["event_data"] = event_data
+#                data = {
+#                    "account_id":retry.user_id,
+#                    "event": evt,
+#                    "description": "ADS citation events",
+#                    "time_stamp": event.event_time.strftime('%s'),
+#                    "event_data": event_data,           
+#                }
                 
 
 

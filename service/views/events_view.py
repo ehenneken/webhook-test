@@ -108,21 +108,32 @@ class Triggering(Resource):
                     subs_list.append(r)
         # Send the event of to its subscribers
         if new_event:
-            event_data = {
-                "event": event2descr.get(event),
-                "citing_bibcode": citing_bibcode,
-                "cited_bibcode": cited_bibcode,
-                "cited_id": cited_id
-            }
+#            event_data = {
+#                "event": event2descr.get(event),
+#                "citing_bibcode": citing_bibcode,
+#                "cited_bibcode": cited_bibcode,
+#                "cited_id": cited_id
+#            }
+            # we are just proxying whatever was submitted
+            event_data = request.json
             for s in subs_list:
                 # prepare the data to be POST-ed
-                data = {
-                    "account_id":s.user_id,
-                    "event": event,
-                    "description": "ADS citation events",
-                    "time_stamp": event_time.strftime('%s'),
-                    "event_data": event_data,           
-                }
+                # First get the default values for the payload
+                data = current_app.config.get('DEFAULT_PAYLOAD')
+                # Now update it with actual values
+                data["account_id"] = s.user_id
+                data["time_stamp"] = event_time.strftime('%s')
+                data["event"] = event_data
+                data["event_id"] = ne.id
+#                data = {
+#                    "account_id":s.user_id,
+#                    "event": event,
+#                    "creator": "ADS",
+#                    "license": "CC0",
+#                    "description": "ADS citation events",
+#                    "time_stamp": event_time.strftime('%s'),
+#                    "event_data": event_data,           
+#                }
                 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
                 success = True
                 try:
