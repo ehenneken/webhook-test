@@ -2,6 +2,7 @@ FROM phusion/baseimage:0.9.22
 
 RUN apt-get update
 RUN apt-get install -y git bzip2 net-tools curl nano python-pip python-dev libpq-dev
+RUN pip install -U pip
 RUN pip install --upgrade gunicorn==19.6.0 gevent==1.1.2 supervisor==3.3.0 futures==3.0.5
 
 # add scripts/tags
