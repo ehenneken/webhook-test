@@ -25,7 +25,7 @@ DEFAULT_PAYLOAD = {
     "source": "ADS.Discovery",
     "description": "ADS events",
     "time_stamp": "time stamp of event",
-    "event_data": {},
+    "payload": {},
 }
 # sqlite:////tmp/test.db
 #SQLALCHEMY_BINDS = {

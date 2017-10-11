@@ -49,7 +49,6 @@ class Triggering(Resource):
         # Maximum number of attempts to send events to a certain callback URL
         max_tries = current_app.config.get('MAX_SEND_ATTEMPTS')
         # Add an entry to the events database
-        data_type, record_type, event_type = event.split('.')
         event_time = datetime.utcnow()
         # Did we already see this event:
         new_event = True
@@ -98,7 +97,8 @@ class Triggering(Resource):
                 # Now update it with actual values
                 data["id"] = ne.id
                 data["time"] = event_time.strftime('%s')
-                data["event"] = request.json
+                data["event"] = event
+                data{"payload"] = request.json
                 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
                 success = True
                 try:
