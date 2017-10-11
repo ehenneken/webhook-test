@@ -77,7 +77,7 @@ class Triggering(Resource):
                 data["id"] = ne.id
                 data["description"] = "ADS citation events"
                 data["creator"] = "ADS"
-                data["source"] = "ADS.Discovery",
+                data["source"] = "ADS.Discovery"
                 data["time"] = event_time.strftime('%s')
                 data["event"] = event
                 data["payload"] = event_payload
