@@ -98,7 +98,7 @@ class Triggering(Resource):
                 data["id"] = ne.id
                 data["time"] = event_time.strftime('%s')
                 data["event"] = event
-                data{"payload"] = request.json
+                data["payload"] = request.json
                 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
                 success = True
                 try:
