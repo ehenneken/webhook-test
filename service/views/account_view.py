@@ -40,13 +40,8 @@ class Account(Resource):
             user_id = request.json['user_id']
         except:
             return {'error': 'No "user_id" provided in authentication request'}, 401
-        try:
-            token = request.json['user_token']
-        except:
-            return {'error': 'No "user_token" provided in authentication request'}, 401
-        #account = db.session.query(Accounts).filter(Accounts.user_id == user_id).first()
         account = Accounts.query.filter(Accounts.user_id == user_id).first()
-
+        token = str(uuid.uuid4())
         if not account:
             try:
                 acc = Accounts(user_id = user_id, access_token = token)
