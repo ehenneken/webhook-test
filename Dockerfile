@@ -26,7 +26,7 @@ ADD gunicorn.sh /etc/service/gunicorn/run
 
 EXPOSE 9000
 # insert the local config
-ADD service/local_config.py /local_config.py
+ADD service/local_config.py /app/local_config.py
 RUN /bin/bash -c "find . -maxdepth 2 -name config.py -exec /bin/bash -c 'echo {} | sed s/config.py/local_config.py/ | xargs -n1 cp /local_config.py' \;"
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN /after_install.sh

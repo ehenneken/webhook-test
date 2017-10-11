@@ -59,26 +59,11 @@ class ResendEvents(Command):
             retries = Resend.query.all()
             for retry in retries:
                 event = Events.query.filter(Events.id == retry.event_id).first()
-                evt = "{0}.{1}.{2}".format(event.data_type, event.record_type, event.event)
-                event_data = {
-                    "event": event2descr.get(evt),
-                    "citing_bibcode": event.citing_bibcode,
-                    "cited_bibcode": event.cited_bibcode,
-                    "cited_id": event.cited_id
-                }
                 data = app.config.get('DEFAULT_PAYLOAD')
                 data["account_id"] = retry.user_id
-                data["event"] = evt
+                data["event"] = event.event
                 data["time_stamp"] = event.event_time.strftime('%s')
-                data["event_data"] = event_data
-#                data = {
-#                    "account_id":retry.user_id,
-#                    "event": evt,
-#                    "description": "ADS citation events",
-#                    "time_stamp": event.event_time.strftime('%s'),
-#                    "event_data": event_data,           
-#                }
-                
+                data["event_data"] = json.loads(event.event_data)
 
 
 # Set up the alembic migration

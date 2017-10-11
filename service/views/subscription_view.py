@@ -44,10 +44,6 @@ class Subscription(Resource):
         for s in subscriptions:
             if s.event == event and s.feedback_url == url:
                 return {'warning': 'subscription already exists'}, 200
-        # Check if the subscriber subscribes to a supported event type
-        AVAILABLE_EVENTS = current_app.config.get('AVAILABLE_EVENTS')
-        if event not in AVAILABLE_EVENTS:
-            return {'error': 'unsupported event'}, 401
         # We're good to go
         subs = Subscriptions(
             feedback_url = url,

@@ -17,8 +17,6 @@ if not os.path.isdir(LOG_PATH):
 
 WEBHOOK_TRIGGER_TOKEN = 'very secret token'
 WEBHOOK_REGISTRATION_TOKEN = 'another very secret token'
-AVAILABLE_EVENTS = [] # list of supported events
-EVENT_DESCRIPTIONS = {}
 MAX_SEND_ATTEMPTS = 5
 DEFAULT_PAYLOAD = {
     "account_id":"will hold user id",

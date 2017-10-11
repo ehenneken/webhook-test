@@ -4,7 +4,9 @@ from flask import current_app
 from flask_restful import Resource
 from datetime import datetime
 import requests
+import hashlib
 import json
+import sys
 from ..models import db, Subscriptions, Events, Resend
 
 # {
@@ -40,50 +42,30 @@ class Triggering(Resource):
             return {'error': 'incorrect trigger token was provided'}, 401
         # The token supplied was correct: accept the event
         # Do some basic checking regarding acceptability
-        AVAILABLE_EVENTS = [e for e in current_app.config.get('AVAILABLE_EVENTS') if e.find('*') == -1]
         try:
             event = request.json['event']
         except:
             return {'error': 'no event was provided'}, 500
-        if event not in AVAILABLE_EVENTS:
-            return {'error': 'unacceptable event "{0}" was provided'.format(event)}, 500
-        # Mapping from event identifier to short description
-        event2descr = current_app.config.get('EVENT_DESCRIPTIONS')
         # Maximum number of attempts to send events to a certain callback URL
         max_tries = current_app.config.get('MAX_SEND_ATTEMPTS')
-#        acceptable = check_event(event, base_types)
-#        if not acceptable:
-#            return {'error': 'unacceptable event "{0}" was provided'.format(event)}, 500
-        # We have an acceptable event: add an entry to the events database
+        # Add an entry to the events database
         data_type, record_type, event_type = event.split('.')
         event_time = datetime.utcnow()
-        # Get the rest of the event data
-        try:
-            citing_bibcode = request.json['citing_bibcode']
-            cited_id = request.json['cited_id']
-            cited_bibcode = request.json['cited_bibcode']
-        except:
-            return {'error': 'insufficient event data was provided'}, 500
-        # We have all the event data required
         # Did we already see this event:
         new_event = True
-        e = Events.query.filter(Events.citing_bibcode == citing_bibcode, Events.cited_id == cited_id).all()
-        for evnt in e:
-            # The events submitted are of the type "foo.bar.baz", so we need to match on the last part
-            # with the 'event' column in the Events table
-            if evnt.event == event_type:
-                new_event = False
+        e = Events.query.filter(Events.event_md5 == hashlib.md5(json.dumps(request.json, sort_keys=True)).hexdigest()).first()
+        # If the above query returned a result, we already have this event
+        if e:
+            sys.stderr.write('Already saw this event. Skipping...\n')
+            new_event = False
         # If we have a new event, add it to the Events table
         if new_event:
             try:
                 ne = Events(
-                    data_type = data_type,
-                    record_type = record_type,
-                    event = event_type,
+                    event = event,
                     event_time = event_time,
-                    citing_bibcode = citing_bibcode,
-                    cited_bibcode = cited_bibcode,
-                    cited_id = cited_id
+                    event_data = json.dumps(request.json, sort_keys=True),
+                    event_md5  = hashlib.md5(json.dumps(request.json, sort_keys=True)).hexdigest()
                 )
                 db.session.add(ne)
                 db.session.commit()
@@ -108,14 +90,7 @@ class Triggering(Resource):
                     subs_list.append(r)
         # Send the event of to its subscribers
         if new_event:
-#            event_data = {
-#                "event": event2descr.get(event),
-#                "citing_bibcode": citing_bibcode,
-#                "cited_bibcode": cited_bibcode,
-#                "cited_id": cited_id
-#            }
             # we are just proxying whatever was submitted
-            event_data = request.json
             for s in subs_list:
                 # prepare the data to be POST-ed
                 # First get the default values for the payload
@@ -123,17 +98,8 @@ class Triggering(Resource):
                 # Now update it with actual values
                 data["account_id"] = s.user_id
                 data["time_stamp"] = event_time.strftime('%s')
-                data["event"] = event_data
+                data["event"] = request.json
                 data["event_id"] = ne.id
-#                data = {
-#                    "account_id":s.user_id,
-#                    "event": event,
-#                    "creator": "ADS",
-#                    "license": "CC0",
-#                    "description": "ADS citation events",
-#                    "time_stamp": event_time.strftime('%s'),
-#                    "event_data": event_data,           
-#                }
                 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
                 success = True
                 try:
@@ -167,14 +133,3 @@ class Triggering(Resource):
                         db.session.commit()
                    
         return 200
-
-
-    @classmethod
-    def check_event(e, btypes):
-        # We don't accept events with just a base type
-        if len(e.split('.')) <= 1 or len(e.split('.')) > 3:
-            return False
-        # We don't accept event of unconfigured base types
-        if e.split('.')[0] not in btypes:
-            return False
-        return True
