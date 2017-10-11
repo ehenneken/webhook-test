@@ -96,10 +96,9 @@ class Triggering(Resource):
                 # First get the default values for the payload
                 data = current_app.config.get('DEFAULT_PAYLOAD')
                 # Now update it with actual values
-                data["account_id"] = s.user_id
-                data["time_stamp"] = event_time.strftime('%s')
+                data["id"] = ne.id
+                data["time"] = event_time.strftime('%s')
                 data["event"] = request.json
-                data["event_id"] = ne.id
                 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
                 success = True
                 try:

@@ -19,14 +19,13 @@ WEBHOOK_TRIGGER_TOKEN = 'very secret token'
 WEBHOOK_REGISTRATION_TOKEN = 'another very secret token'
 MAX_SEND_ATTEMPTS = 5
 DEFAULT_PAYLOAD = {
-    "account_id":"will hold user id",
+    "id":"will hold user id",
     "event": "will hold event string",
     "creator": "ADS",
-    "license": "CC0",
-    "description": "ADS citation events",
+    "source": "ADS.Discovery",
+    "description": "ADS events",
     "time_stamp": "time stamp of event",
     "event_data": {},
-    "event_id": "event identifier"
 }
 # sqlite:////tmp/test.db
 #SQLALCHEMY_BINDS = {
