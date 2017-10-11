@@ -9,20 +9,6 @@ import json
 import sys
 from ..models import db, Subscriptions, Events, Resend
 
-# {
-#  "account_id": "d969a56d-e520-405d-a24f-497ac6923781",
-#  "description": "ADS citation events",
-#  "time_stamp": 1441166640.359496,
-#  "event": "citation.software.detected",
-#  "event_data": {
-#     "event": "citation detected",
-#     "citing_bibcode": "2017arXiv170301301Z",
-#     "citing_id": "arXiv:1703.01301",
-#     "cited_id": "10.5281/zenodo.45906"
-#  },
-#  "id": "3e25a22e-6a83-4cf0-a2bf-d7617aa32551"
-#}
-
 class Triggering(Resource):
 
     def post(self):
@@ -71,22 +57,11 @@ class Triggering(Resource):
             except Exception, e:
                 return {'error':'error adding event to database: {0}'.format(e)}, 500
         # Get all the subscriptios for this event
-        # if event submitted is foo.bar.baz, we get subscriptions for
-        #  foo.bar.baz
-        #  foo.bar.*
-        #  foo.*
-        # This can probably be done in a one-liner, but I'm being lazy
-        if len(event.split('.')) == 2:
-            events = [event, "{0}.*".format(event.split('.')[0])]
-        else:
-            events = [event, "{0}.*".format(event.split('.')[0]), "{0}.{1}.*".format(event.split('.')[0], event.split('.')[1])]
-        # Now we're going to get all subscriptions the brute force way
         subs_list = []
-        for e in events:
-            res = Subscriptions.query.filter(Subscriptions.event == e).all()
-            for r in res:
-                if r.is_active:
-                    subs_list.append(r)
+        res = Subscriptions.query.filter(Subscriptions.event == event).all()
+        for r in res:
+            if r.is_active:
+                subs_list.append(r)
         # Send the event of to its subscribers
         if new_event:
             # we are just proxying whatever was submitted
