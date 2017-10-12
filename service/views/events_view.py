@@ -32,6 +32,10 @@ class Triggering(Resource):
             event = request.json['event']
         except:
             return {'error': 'no event was provided'}, 500
+        try:
+            event_payload = request.json['payload']
+        except:
+            return {'error': 'no payload was provided'}, 500
         # Maximum number of attempts to send events to a certain callback URL
         max_tries = current_app.config.get('MAX_SEND_ATTEMPTS')
         # Add an entry to the events database
@@ -71,9 +75,12 @@ class Triggering(Resource):
                 data = current_app.config.get('DEFAULT_PAYLOAD')
                 # Now update it with actual values
                 data["id"] = ne.id
+                data["description"] = "ADS citation events"
+                data["creator"] = "ADS"
+                data["source"] = "ADS.Discovery"
                 data["time"] = event_time.strftime('%s')
                 data["event"] = event
-                data["payload"] = request.json
+                data["payload"] = event_payload
                 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
                 success = True
                 try:
@@ -105,5 +112,5 @@ class Triggering(Resource):
                         # Too many failures, subscription will get deactivated
                         s.is_active = False
                         db.session.commit()
-                   
+
         return 200
