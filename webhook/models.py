@@ -5,7 +5,6 @@ The database is not initiated here, but a pointer is created named db. This is
 to be passed to the app creator within the Flask blueprint.
 """
 
-import uuid
 from datetime import datetime
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects import postgresql
@@ -36,7 +35,7 @@ class Subscriptions(db.Model):
     __tablename__ = 'subscriptions'
     id = db.Column(db.Integer, primary_key=True)
     feedback_url = db.Column(db.String)
-    event = db.Column(db.String) # even type subscribed to, e.g. "citation.software.*"
+    event = db.Column(db.String)
     failure_count = db.Column(db.Integer)
     is_active = db.Column(db.Boolean)
 
@@ -76,7 +75,7 @@ class Resend(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
     user_id  = db.Column(db.String, db.ForeignKey('accounts.user_id'))
     feedback_url = db.Column(db.String)
-    
+
     def __repr__(self):
         return '<User {0}, {1}, {2}, {3}>'\
             .format(self.id, self.event_id, self.user_id, self.feedback_url)

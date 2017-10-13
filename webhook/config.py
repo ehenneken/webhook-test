@@ -7,18 +7,17 @@ the application name.
 import os
 import pwd
 
-LOG_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '../')
-)
-LOG_PATH = '{home}/logs/'.format(home=LOG_PATH)
-
-if not os.path.isdir(LOG_PATH):
-    os.mkdir(LOG_PATH)
-
+# This token is to allow processes to submit even data to this service
 WEBHOOK_TRIGGER_TOKEN = 'very secret token'
+# Token necessary to create a user account (temporary - will need better solution)
 WEBHOOK_REGISTRATION_TOKEN = 'another very secret token'
+# The service will attempt this amount of delivery attempts before a callback
+# URL is deactivated
 MAX_SEND_ATTEMPTS = 5
-DEFAULT_PAYLOAD = {
+# Keep definition of event data out of application?
+# This will be used in more than one place of the service, so it makes sense
+# to define the structure only once. Alternative: define it in a module/class?
+DEFAULT_EVENT_DATA = {
     "id":"will hold user id",
     "event": "will hold event string",
     "creator": "ADS",
@@ -27,16 +26,22 @@ DEFAULT_PAYLOAD = {
     "time": "time stamp of event",
     "payload": [{}],
 }
-# sqlite:////tmp/test.db
-#SQLALCHEMY_BINDS = {
-#    'webhooks': 'postgresql+psycopg2://postgres:postgres@localhost:5433/testdb'
-#}
-
+# Database backend used by service
 SQLALCHEMY_BINDS = {
-    'webhooks': 'sqlite:////Users/edwin/tmp/testdb.db'
+    'webhooks': 'sqlite:////tmp/testdb.db'
 }
-
+# Allow definition of deployment type through environment
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'staging').lower()
+# Logging definitions
+# Define where the application will log to
+LOG_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '../')
+)
+LOG_PATH = '{home}/logs/'.format(home=LOG_PATH)
+# and create the directory if it isn't there
+if not os.path.isdir(LOG_PATH):
+    os.mkdir(LOG_PATH)
+# 
 WEBHOOKS_LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -52,7 +57,7 @@ WEBHOOKS_LOGGING = {
             'formatter': 'default',
             'level': 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': '/tmp/webhooks.app.{}.log'.format(ENVIRONMENT),
+            'filename': '/{0}/webhooks.app.{1}.log'.format(LOG_PATH, ENVIRONMENT),
         },
         'console': {
             'formatter': 'default',

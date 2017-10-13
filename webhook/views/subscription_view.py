@@ -19,7 +19,7 @@ class Subscription(Resource):
         $ curl -X POST \
           > -H "Authorization: Bearer <your access token>" \
           > -H "Content-Type: application/json" \
-          > -d '{"event": "citation.*", "url": "<your callback URL>"}' \
+          > -d '{"event": "relation_added", "url": "<your callback URL>"}' \
           > http://<some url here>/subscription
         """
         if 'Bearer' not in request.headers['Authorization']:
@@ -52,7 +52,7 @@ class Subscription(Resource):
             failure_count = 0,
             is_active = True
         )
-        
+
         db.session.add(subs)
         db.session.commit()
 

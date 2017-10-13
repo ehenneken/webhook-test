@@ -72,7 +72,7 @@ class Triggering(Resource):
             for s in subs_list:
                 # prepare the data to be POST-ed
                 # First get the default values for the payload
-                data = current_app.config.get('DEFAULT_PAYLOAD')
+                data = current_app.config.get('DEFAULT_EVENT_DATA')
                 # Now update it with actual values
                 data["id"] = ne.id
                 data["description"] = "ADS citation events"

@@ -37,7 +37,7 @@ class DestroyDatabase(Command):
     @staticmethod
     def run(app=app):
         """
-        Creates the database in the application context
+        Drops all database tables in the application context
         :return: no return
         """
         with app.app_context():
@@ -51,7 +51,8 @@ class ResendEvents(Command):
     @staticmethod
     def run(app=app):
         """
-        Creates the database in the application context
+        Gets all entries from the table with failed emissions
+        and tries to emit them again
         :return: no return
         """
         with app.app_context():
@@ -59,7 +60,7 @@ class ResendEvents(Command):
             retries = Resend.query.all()
             for retry in retries:
                 event = Events.query.filter(Events.id == retry.event_id).first()
-                data = app.config.get('DEFAULT_PAYLOAD')
+                data = app.config.get('DEFAULT_EVENT_DATA')
                 data["account_id"] = retry.user_id
                 data["event"] = event.event
                 data["time_stamp"] = event.event_time.strftime('%s')

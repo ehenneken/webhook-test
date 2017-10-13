@@ -2,16 +2,17 @@
 """
 Application
 """
-
+# General modules
 import logging.config
-
+from flask import Flask
+from flask_restful import Api
+# We want to support resource inspection
+from flask_discoverer import Discoverer
+# application-specific modules
 from views import Account
 from views import Subscription
 from views import Triggering
 from models import db
-from flask import Flask
-from flask_restful import Api
-from flask_discoverer import Discoverer
 
 def create_app():
     """
@@ -33,14 +34,15 @@ def create_app():
     db.init_app(app)
 
     # Add the end resource end points
+    # The account end-point supports interactions with user accounts
     api.add_resource(Account,
                      '/account',
                      methods = ['POST'])
-    
+    # The subscribe end-point allows users to suubscribe to events
     api.add_resource(Subscription,
                      '/subscribe',
                      methods = ['POST'])
-    
+    # The trigger endpoint is where event-producing entities send their data to
     api.add_resource(Triggering,
                      '/trigger',
                      methods = ['POST'])
