@@ -9,7 +9,7 @@ sys.path.append(PROJECT_HOME)
 from flask.ext.script import Manager, Command, Option
 from flask.ext.migrate import Migrate, MigrateCommand
 from models import db, Resend, Events
-from service.app import create_app
+from webhook.app import create_app
 
 # Load the app with the factory
 app = create_app()

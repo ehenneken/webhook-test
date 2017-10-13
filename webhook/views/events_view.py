@@ -78,7 +78,7 @@ class Triggering(Resource):
                 data["description"] = "ADS citation events"
                 data["creator"] = "ADS"
                 data["source"] = "ADS.Discovery"
-                data["time"] = event_time.strftime('%s')
+                data["time"] = str(event_time.strftime('%s'))
                 data["event"] = event
                 data["payload"] = event_payload
                 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
